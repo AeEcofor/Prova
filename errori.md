@@ -1,61 +1,96 @@
 # Errori in git
 
-## tip of your current branch is behind
+## Errore: "tip of your current branch is behind"
 
 What causes ”tip of your current branch is behind”?
+
 Git works with the concept of local and remote branches. 
+
 A local branch is a branch that exists in your local version of the git repository. 
+
 A remote branch is one that exists on the remote location (most repositories usually have a remote called origin).
 
 “the tip of your current branch is behind its remote counterpart” means that there have been changes on the remote branch that you don’t have locally.
 
 2 types of changes to the remote branch: someone added commits or someone modified the history of the branch.
 
-1. No rebase(s): merge the remote branch into local
+## Soluzioni
+
+### Soluzione 1
+
+Merge the remote branch into local
 
 `git pull`
 
-Se non funziona:
+Se non funziona e non mi interessa l'origin:
 
-### Cancello l'origin (locale)
+### Soluzione 2: cancello l'origin (locale)
 
 Warning: this is a destructive action, it overwrites all the changes in your local branch with the changes from the remote
 
 `git reset --hard origin/master`
 
-Solutions 3. and 4. save the local changes somewhere else (the git stash or another branch). They reset the local branch from the origin using the above command. Finally they re-apply any local changes and send them up.
+### Soluzione 3: salvo le modifiche locali da qualche parte (git stash o un'altro branch) e poi ripristino
 
-3. Remote rebase + local commits: soft git reset, stash, “hard pull”, pop stash, commit
-Say you’ve got local changes (maybe just a few commits).
+Remote rebase + local commits: 
 
-A simple way to use the knowledge from 2. is to do a “soft reset”.
+1. soft git reset
 
-Options to “soft reset”
-Option 1, say the first commit you’ve added has sha <first-commit-sha> use:
+2. stash 
 
-Note the ^ which means the commit preceding <first-commit-sha>
+3. “hard pull”
 
-git reset <first-commit-sha>^ .
-Option 2, if you know the number of commits you’ve added, you can also use the following, replace 3 with the number of commits you want to “undo”:
+4. pop stash
 
-git reset HEAD~3 .
+5. commit
+
+
+#### 1. Soft reset
+
+##### Opzione 1
+The first commit you’ve added has sha `<first-commit-sha>`use:
+
+Note the ^ which means the commit preceding `<first-commit-sha>`
+
+`git reset <first-commit-sha>^ .`
+
+##### Opzione 2
+
+If you know the number of commits you’ve added you replace 3 with the number of commits you want to “undo”:
+
+`git reset HEAD~3 .`
+
 You should now be able to run git status and see un-staged (ie. “modified”) file changes from the local commits we’ve just “undone”.
 
-Save your changes to the stash
-Run git stash to save them to the stash (for more information see git docs for stash).
+#### 2. Save your changes to the stash
+
+Run git stash to save them to the stash.
 
 If you run git status you’ll see the un-staged (“modified”) files aren’t there any more.
 
+#### 2. Hard pull
+
 Run the hard pull as seen in the previous section
+
 Run git reset --hard origin/branch-name as seen in 2.
 
+#### 3. pop stash
+
 Un-stash and re-commit your changes
+
 To restore the stashed changes:
 
-git stash pop
+`git stash pop`
+
+#### 4. Commit
+
 You can now use git add (hopefully with the -p option, eg. git add -p .) followed by git commit to add your local changes to a branch that the remote won’t reject on push.
 
 Once you’ve added your changes, git push shouldn’t get rejected.
+
+---
+
+### Soluzione 4: branch off of the local branch, and re-apply the commits of a “hard pull”-ed version of the branch
 
 4. Remote rebase + local commits 2: checkout to a new temp branch, “hard pull” the original branch, cherry-pick from temp onto branch
 That alternative to using stash is to branch off of the local branch, and re-apply the commits of a “hard pull”-ed version of the branch.
