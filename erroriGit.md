@@ -1,5 +1,11 @@
 # Errori in git
 
+## Errore: "fatal: Not a valid object name: 'master'"
+
+This error happens when trying to create a branch when there is no master branch.
+
+A master branch is created after our first commit.
+
 ## Errore: "tip of your current branch is behind"
 
 What causes ”tip of your current branch is behind”?
